@@ -37,7 +37,7 @@
 
 <select id="getAllSchemas" resultMap="SchemaResultMap" fetchSize="2000">
 	SELECT schema_name,
-	CASE schema_name WHEN 'public' THEN '1' ELSE '0' END is_current 
+	CASE schema_name WHEN #{owner} THEN '1' ELSE '0' END is_current 
 	FROM information_schema.schemata
 </select>
 
@@ -91,24 +91,24 @@ SELECT
 	  WHEN 'REFERENTIAL' THEN 'R' 
 	  ELSE 'C' END type,
 	  c.column_list  columns,
-	  r.fktable_schema fkConstraintOwner,
-	  r.fktable_name fkTable,
+	  r.pktable_schema fkConstraintOwner,
+	  r.pktable_name fkTable,
 	  r.pk_name fkConstraintName,
 	  GROUP_CONCAT(r.pkcolumn_name ORDER BY r.ordinal_position SEPARATOR ',') fkColumns
 	FROM information_schema.constraints c
-	LEFT  JOIN information_schema.cross_references r ON (
+	LEFT JOIN information_schema.cross_references r ON (
 					c.constraint_catalog=r.fktable_catalog AND 
 					c.constraint_schema=r.fktable_schema AND 
-					c.constraint_name=r.fk_name)
+					c.constraint_name=r.fk_name )
 	WHERE c.table_schema = #{owner}
-       GROUP BY
-          c.table_schema ,
-	  c.constraint_name ,
-	  c.table_name ,
-	  c.constraint_type ,
-          c.column_list,
-          r.fktable_schema ,
-	  r.fktable_name ,
+    GROUP BY
+      c.table_schema,
+	  c.constraint_name,
+	  c.table_name,
+	  c.constraint_type,
+      c.column_list,
+      r.fktable_schema,
+	  r.fktable_name,
 	  r.pk_name 
 </select>
 
