@@ -54,12 +54,12 @@
 		END id_type,
 	 t.table_type secondary_type, 
     c.column_name column_name,
-    c.data_type column_type,
+    c.type_name column_type,
     t.remarks object_comment,
     c.remarks column_comment
 	FROM information_schema.tables t
 	   JOIN information_schema.columns c ON t.table_catalog=c.table_catalog AND t.table_schema=c.table_schema AND t.table_name=c.table_name
-	WHERE t.table_schema = #{owner}
+    WHERE t.table_schema = #{owner}
 	ORDER BY t.table_schema, t.table_name, t.table_type, c.ordinal_position
 </select>
 
@@ -176,7 +176,7 @@ SELECT
 	select  
 	  i.*
 	  from INFORMATION_SCHEMA.INDEXES i
-	where i.table_name=#{owner} and i.table_schema=#{tableName}
+      where i.table_name=#{owner} and i.table_schema=#{tableName}
 </select>
 
 <select id="getTableConstraintsDetails" >
